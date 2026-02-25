@@ -32,10 +32,6 @@
     0% { background-position: -200% center; }
     100% { background-position: 200% center; }
   }
-  @keyframes orbit {
-    from { transform: rotate(0deg) translateX(14px) rotate(0deg); }
-    to   { transform: rotate(360deg) translateX(14px) rotate(-360deg); }
-  }
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -44,27 +40,87 @@
     0%, 100% { box-shadow: 0 0 18px rgba(246,216,96,0.4), 0 0 40px rgba(246,216,96,0.15); }
     50% { box-shadow: 0 0 30px rgba(246,216,96,0.65), 0 0 60px rgba(246,216,96,0.25); }
   }
+  @keyframes shoot {
+    0% { transform: translate(0, 0) rotate(-35deg); opacity: 1; }
+    100% { transform: translate(280px, 180px) rotate(-35deg); opacity: 0; }
+  }
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    60% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes countdownPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  @keyframes sparkle {
+    0% { transform: scale(0) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1) rotate(180deg); opacity: 0.8; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+  }
+
+  html { scroll-behavior: smooth; }
 
   body {
     background: var(--deep);
     display: flex;
     justify-content: center;
-    align-items: center;
     min-height: 100vh;
     font-family: 'DM Sans', sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    cursor: none;
+  }
+
+  /* ── Custom cursor ── */
+  .cursor {
+    position: fixed;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--lavender);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.15s ease, border-color 0.2s ease;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+  }
+  .cursor-dot {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(246,216,96,0.6);
+  }
+  .cursor.hovering {
+    transform: translate(-50%, -50%) scale(1.6);
+    border-color: var(--gold);
+  }
+
+  /* ── Sparkle trail ── */
+  .sparkle-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    border-radius: 50%;
+    animation: sparkle 0.6s ease-out forwards;
   }
 
   .page {
     width: 680px;
-    min-height: 960px;
+    min-height: 100vh;
     background: var(--navy);
     position: relative;
     overflow: hidden;
     border-radius: 4px;
     border: 1px solid rgba(196,181,244,0.15);
     box-shadow: 0 0 80px rgba(10,5,40,0.9), 0 0 160px rgba(100,80,200,0.1);
-    animation: fadeIn 1s ease both;
   }
 
   /* ── Stars ── */
@@ -75,6 +131,27 @@
     background: white;
     animation: twinkle var(--dur, 3s) ease-in-out infinite;
     animation-delay: var(--delay, 0s);
+    cursor: none;
+  }
+
+  /* ── Shooting stars ── */
+  .shooting-star {
+    position: absolute;
+    width: 80px; height: 1.5px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
+    border-radius: 2px;
+    z-index: 1;
+    animation: shoot 0.8s ease-out forwards;
+    pointer-events: none;
+  }
+  .shooting-star::before {
+    content: '';
+    position: absolute;
+    left: 0; top: -1px;
+    width: 6px; height: 3.5px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 8px white, 0 0 16px rgba(196,181,244,0.6);
   }
 
   /* ── Gradient sky layers ── */
@@ -104,6 +181,15 @@
     gap: 0;
   }
 
+  /* ── Scroll reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .reveal.visible {
+    animation: reveal 0.7s ease both;
+  }
+
   /* ── Top badge ── */
   .badge {
     display: inline-flex;
@@ -119,6 +205,7 @@
     color: var(--lavender);
     width: fit-content;
     margin-bottom: 26px;
+    animation: popIn 0.6s ease both 0.3s;
   }
   .badge-dot {
     width: 5px; height: 5px;
@@ -128,7 +215,10 @@
   }
 
   /* ── Headline ── */
-  .headline-wrap { margin-bottom: 6px; }
+  .headline-wrap {
+    margin-bottom: 6px;
+    animation: reveal 0.8s ease both 0.5s;
+  }
   .eyebrow {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
@@ -164,6 +254,54 @@
     letter-spacing: 0.01em;
   }
 
+  /* ── Countdown ── */
+  .countdown-section {
+    margin: 28px 0 4px;
+    animation: reveal 0.8s ease both 0.7s;
+  }
+  .countdown-label {
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+  .countdown {
+    display: flex;
+    gap: 12px;
+  }
+  .countdown-unit {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(196,181,244,0.15);
+    border-radius: 14px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 72px;
+    transition: all 0.3s ease;
+  }
+  .countdown-unit:hover {
+    background: rgba(196,181,244,0.1);
+    border-color: rgba(196,181,244,0.3);
+    animation: countdownPulse 0.4s ease;
+  }
+  .countdown-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--white);
+    line-height: 1;
+  }
+  .countdown-num.tick {
+    animation: popIn 0.3s ease;
+  }
+  .countdown-word {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
   /* ── Divider ── */
   .divider {
     width: 100%;
@@ -187,6 +325,12 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: all 0.3s ease;
+  }
+  .detail-card:hover {
+    background: rgba(196,181,244,0.08);
+    border-color: rgba(196,181,244,0.3);
+    transform: translateY(-2px);
   }
   .detail-label {
     font-size: 9.5px;
@@ -244,16 +388,23 @@
     border-radius: 100px;
     padding: 7px 13px 7px 10px;
     transition: all 0.3s ease;
+    cursor: none;
+    position: relative;
   }
   .planet-pill:hover {
     background: rgba(196,181,244,0.12);
     border-color: rgba(196,181,244,0.35);
+    transform: translateY(-2px);
+  }
+  .planet-pill:hover .planet-dot {
+    transform: scale(1.4);
   }
   .planet-dot {
     width: 10px; height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
     animation: float 3s ease-in-out infinite;
+    transition: transform 0.3s ease;
   }
   .planet-name {
     font-size: 12px;
@@ -265,6 +416,43 @@
     font-size: 10px;
     color: var(--muted);
     margin-left: 2px;
+  }
+
+  /* ── Planet fun fact tooltip ── */
+  .planet-fact {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: rgba(13,18,53,0.95);
+    border: 1px solid rgba(196,181,244,0.3);
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 200px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    z-index: 20;
+  }
+  .planet-pill:hover .planet-fact {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  .planet-fact-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13.5px;
+    font-style: italic;
+    color: rgba(250,245,255,0.8);
+    line-height: 1.5;
+  }
+  .planet-fact::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(196,181,244,0.3);
   }
 
   /* ── Tips ── */
@@ -282,10 +470,69 @@
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 12px;
     padding: 13px 14px;
+    transition: all 0.3s ease;
+  }
+  .tip:hover {
+    background: rgba(196,181,244,0.06);
+    border-color: rgba(196,181,244,0.2);
+    transform: translateY(-1px);
   }
   .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
   .tip-text { font-size: 12.5px; color: rgba(250,245,255,0.65); line-height: 1.5; }
   .tip-text strong { color: var(--white); font-weight: 400; }
+
+  /* ── RSVP button ── */
+  .rsvp-section {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .rsvp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(196,181,244,0.15), rgba(244,194,194,0.15));
+    border: 1px solid rgba(196,181,244,0.3);
+    border-radius: 100px;
+    padding: 14px 36px;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--white);
+    cursor: none;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .rsvp-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(246,216,96,0.2), rgba(244,194,194,0.2), rgba(196,181,244,0.2));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .rsvp-btn:hover::before {
+    opacity: 1;
+  }
+  .rsvp-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    box-shadow: 0 0 24px rgba(246,216,96,0.2), 0 0 48px rgba(196,181,244,0.1);
+  }
+  .rsvp-btn span {
+    position: relative;
+    z-index: 1;
+  }
+  .rsvp-btn.clicked {
+    background: linear-gradient(135deg, rgba(246,216,96,0.2), rgba(244,194,194,0.2));
+    border-color: var(--gold);
+    box-shadow: 0 0 30px rgba(246,216,96,0.3);
+  }
+  .rsvp-confetti {
+    position: absolute;
+    pointer-events: none;
+    z-index: 30;
+  }
 
   /* ── Footer love note ── */
   .love-note {
@@ -350,7 +597,6 @@
     animation: float 4.5s ease-in-out infinite 2s;
     opacity: 0.7;
   }
-  /* Saturn ring */
   .dp1::after {
     content: '';
     position: absolute;
@@ -360,10 +606,42 @@
     top: 50%; left: 50%;
     transform: translate(-50%, -50%) rotateX(70deg);
   }
+
+  /* ── Click-to-create star burst ── */
+  .star-burst {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+    box-shadow: 0 0 6px var(--gold);
+  }
+
+  /* ── Tap hint ── */
+  .tap-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    animation: reveal 1s ease both 2s;
+    transition: opacity 1s ease;
+  }
+  .tap-hint.hidden { opacity: 0; }
 </style>
 </head>
 <body>
-<div class="page">
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<div class="page" id="page">
 
   <!-- Stars -->
   <div class="stars" id="stars"></div>
@@ -386,11 +664,8 @@
           <stop offset="100%" stop-color="#060818"/>
         </linearGradient>
       </defs>
-      <!-- Back range -->
       <polygon points="0,220 0,160 60,110 130,145 200,80 280,130 340,70 410,120 480,75 550,110 620,90 680,115 680,220" fill="rgba(13,18,53,0.7)"/>
-      <!-- Front range -->
       <polygon points="0,220 0,185 80,155 160,175 250,130 320,165 400,120 470,155 560,135 640,160 680,145 680,220" fill="#080d28"/>
-      <!-- Ground fill -->
       <rect x="0" y="210" width="680" height="10" fill="#060818"/>
     </svg>
   </div>
@@ -406,9 +681,32 @@
       <div class="subheadline">just us & the whole solar system at Grizzly Peak ✦</div>
     </div>
 
+    <!-- Countdown -->
+    <div class="countdown-section">
+      <div class="countdown-label">✦ counting down</div>
+      <div class="countdown" id="countdown">
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-days">--</div>
+          <div class="countdown-word">days</div>
+        </div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-hrs">--</div>
+          <div class="countdown-word">hours</div>
+        </div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-min">--</div>
+          <div class="countdown-word">mins</div>
+        </div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-sec">--</div>
+          <div class="countdown-word">secs</div>
+        </div>
+      </div>
+    </div>
+
     <div class="divider"></div>
 
-    <div class="details-row">
+    <div class="details-row reveal">
       <div class="detail-card">
         <div class="detail-label">Where</div>
         <div class="detail-value">Grizzly Peak Vista Point</div>
@@ -426,7 +724,7 @@
       </div>
     </div>
 
-    <p class="context">
+    <p class="context reveal">
       okay so this is actually so cool — once every few years, the planets
       basically <strong>line up in the same patch of sky</strong> and you can see them all at once.
       it happens because every planet orbits the Sun on the same flat plane, so from Earth
@@ -437,37 +735,43 @@
       basically the perfect spot. 🌌
     </p>
 
-    <div class="planet-section">
+    <div class="planet-section reveal">
       <div class="section-title">✦ the planetary cast, west to east</div>
       <div class="planets">
-        <div class="planet-pill">
+        <div class="planet-pill" data-fact="closest planet to the Sun — it zips around in just 88 days. blink and you'll miss her tonight!">
           <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#ffe0b0,#c87a30);animation-delay:0s"></div>
           <span class="planet-name">Mercury</span><span class="planet-note">· low &amp; fleeting</span>
+          <div class="planet-fact"><div class="planet-fact-text"></div></div>
         </div>
-        <div class="planet-pill">
+        <div class="planet-pill" data-fact="the hottest planet (900°F!) and literally named after the goddess of love. fitting for date night 💕">
           <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#fff8c0,#e8c840);animation-delay:0.5s"></div>
           <span class="planet-name">Venus</span><span class="planet-note">· bright &amp; beautiful</span>
+          <div class="planet-fact"><div class="planet-fact-text"></div></div>
         </div>
-        <div class="planet-pill">
+        <div class="planet-pill" data-fact="those rings are made of billions of ice chunks! it could literally float in a bathtub (if you had one that big)">
           <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#f6d860,#b08820);animation-delay:0.2s"></div>
           <span class="planet-name">Saturn</span><span class="planet-note">· rings!</span>
+          <div class="planet-fact"><div class="planet-fact-text"></div></div>
         </div>
-        <div class="planet-pill">
+        <div class="planet-pill" data-fact="2.7 billion miles away right now. the light we see left Neptune 4 hours ago. kinda poetic honestly">
           <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#c0d8ff,#6090d0);animation-delay:1s"></div>
           <span class="planet-name">Neptune</span><span class="planet-note">· telescope needed</span>
+          <div class="planet-fact"><div class="planet-fact-text"></div></div>
         </div>
-        <div class="planet-pill">
+        <div class="planet-pill" data-fact="it literally rotates on its side like a rolling ball. also it's hanging out near the Pleiades star cluster rn!">
           <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#b0f0e0,#50b090);animation-delay:0.8s"></div>
           <span class="planet-name">Uranus</span><span class="planet-note">· binoculars</span>
+          <div class="planet-fact"><div class="planet-fact-text"></div></div>
         </div>
-        <div class="planet-pill">
+        <div class="planet-pill" data-fact="so massive that 1,300 Earths could fit inside. the brightest thing in the sky tonight after the Moon ✦">
           <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#ffd0c0,#d06040);animation-delay:0.3s"></div>
           <span class="planet-name">Jupiter</span><span class="planet-note">· unmissable ✦</span>
+          <div class="planet-fact"><div class="planet-fact-text"></div></div>
         </div>
       </div>
     </div>
 
-    <div class="tips">
+    <div class="tips reveal">
       <div class="tip">
         <div class="tip-icon">⏱</div>
         <div class="tip-text"><strong>get there by 6 PM ok!</strong> Mercury dips below the horizon fast and she's the rarest one</div>
@@ -486,18 +790,27 @@
       </div>
     </div>
 
-    <div class="love-note">
+    <!-- RSVP -->
+    <div class="rsvp-section reveal">
+      <button class="rsvp-btn" id="rsvpBtn">
+        <span>✦ i'm so in ✦</span>
+      </button>
+    </div>
+
+    <div class="love-note reveal">
       <p>"we are literally made of stardust. tonight we finally get to see where it came from 🥹"</p>
       <div class="love-hearts">✦ ♡ ✦ ♡ ✦</div>
     </div>
 
   </div>
+
+  <div class="tap-hint" id="tapHint">✦ tap the sky to make a wish ✦</div>
 </div>
 
 <script>
+  // ── Stars ──
   const starsEl = document.getElementById('stars');
-  const count = 180;
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < 180; i++) {
     const s = document.createElement('div');
     s.className = 'star';
     const size = Math.random() < 0.12 ? Math.random() * 2.5 + 1.5
@@ -512,6 +825,198 @@
       opacity:${0.4 + Math.random() * 0.6};
     `;
     starsEl.appendChild(s);
+  }
+
+  // ── Custom cursor ──
+  const cursor = document.getElementById('cursor');
+  const cursorDot = document.getElementById('cursorDot');
+  let mouseX = 0, mouseY = 0;
+  let sparkleCount = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+    cursorDot.style.left = mouseX + 'px';
+    cursorDot.style.top = mouseY + 'px';
+
+    // Sparkle trail (throttled)
+    sparkleCount++;
+    if (sparkleCount % 3 === 0) {
+      const spark = document.createElement('div');
+      spark.className = 'sparkle-particle';
+      const size = Math.random() * 4 + 2;
+      const colors = ['#f6d860', '#c4b5f4', '#f4c2c2', '#7ee8e8', '#fff'];
+      spark.style.cssText = `
+        left:${mouseX + (Math.random() - 0.5) * 16}px;
+        top:${mouseY + (Math.random() - 0.5) * 16}px;
+        width:${size}px; height:${size}px;
+        background:${colors[Math.floor(Math.random() * colors.length)]};
+      `;
+      document.body.appendChild(spark);
+      setTimeout(() => spark.remove(), 600);
+    }
+  });
+
+  // Hover effect on interactive elements
+  document.querySelectorAll('.planet-pill, .rsvp-btn, .detail-card, .tip, .countdown-unit').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+
+  // ── Shooting stars (random) ──
+  const page = document.getElementById('page');
+  function spawnShootingStar() {
+    const star = document.createElement('div');
+    star.className = 'shooting-star';
+    star.style.top = Math.random() * 40 + '%';
+    star.style.left = Math.random() * 50 + '%';
+    page.appendChild(star);
+    setTimeout(() => star.remove(), 900);
+  }
+  setInterval(() => {
+    if (Math.random() < 0.4) spawnShootingStar();
+  }, 3000);
+  // First one appears sooner
+  setTimeout(spawnShootingStar, 2000);
+
+  // ── Click to burst stars ──
+  const tapHint = document.getElementById('tapHint');
+  let tapped = false;
+  page.addEventListener('click', e => {
+    if (e.target.closest('.rsvp-btn') || e.target.closest('a')) return;
+    const rect = page.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const count = 8 + Math.floor(Math.random() * 6);
+    const colors = ['#f6d860', '#c4b5f4', '#f4c2c2', '#7ee8e8', '#fff'];
+
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'star-burst';
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+      const dist = 30 + Math.random() * 50;
+      const size = 2 + Math.random() * 3;
+      p.style.cssText = `
+        left:${x}px; top:${y}px;
+        width:${size}px; height:${size}px;
+        background:${colors[Math.floor(Math.random() * colors.length)]};
+        box-shadow: 0 0 ${size * 2}px ${colors[Math.floor(Math.random() * colors.length)]};
+        transition: all ${0.4 + Math.random() * 0.4}s ease-out;
+      `;
+      page.appendChild(p);
+      requestAnimationFrame(() => {
+        p.style.left = (x + Math.cos(angle) * dist) + 'px';
+        p.style.top = (y + Math.sin(angle) * dist) + 'px';
+        p.style.opacity = '0';
+        p.style.transform = `scale(0.2)`;
+      });
+      setTimeout(() => p.remove(), 900);
+    }
+
+    if (!tapped) {
+      tapped = true;
+      tapHint.classList.add('hidden');
+    }
+  });
+
+  // ── Countdown ──
+  const target = new Date('2026-02-28T18:00:00-08:00').getTime();
+  const cdDays = document.getElementById('cd-days');
+  const cdHrs = document.getElementById('cd-hrs');
+  const cdMin = document.getElementById('cd-min');
+  const cdSec = document.getElementById('cd-sec');
+  let prevSec = -1;
+
+  function updateCountdown() {
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    cdDays.textContent = String(d).padStart(2, '0');
+    cdHrs.textContent = String(h).padStart(2, '0');
+    cdMin.textContent = String(m).padStart(2, '0');
+    cdSec.textContent = String(s).padStart(2, '0');
+
+    if (s !== prevSec) {
+      cdSec.classList.remove('tick');
+      void cdSec.offsetWidth;
+      cdSec.classList.add('tick');
+      prevSec = s;
+    }
+
+    if (diff === 0) {
+      document.querySelector('.countdown-label').textContent = '✦ it\'s happening RIGHT NOW ✦';
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // ── Planet fun facts ──
+  document.querySelectorAll('.planet-pill').forEach(pill => {
+    const fact = pill.dataset.fact;
+    const textEl = pill.querySelector('.planet-fact-text');
+    if (textEl && fact) textEl.textContent = fact;
+  });
+
+  // ── Scroll reveal ──
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationDelay = (i * 0.1) + 's';
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── RSVP button ──
+  const rsvpBtn = document.getElementById('rsvpBtn');
+  rsvpBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (rsvpBtn.classList.contains('clicked')) return;
+    rsvpBtn.classList.add('clicked');
+    rsvpBtn.querySelector('span').textContent = 'it\'s a date 💫';
+
+    // Confetti burst
+    const rect = rsvpBtn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const emojis = ['✨', '💫', '🌙', '⭐', '💕', '✦', '🪐', '🌟'];
+    for (let i = 0; i < 20; i++) {
+      const c = document.createElement('div');
+      c.className = 'rsvp-confetti';
+      c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      c.style.cssText = `
+        position:fixed; left:${cx}px; top:${cy}px;
+        font-size:${14 + Math.random() * 12}px;
+        pointer-events:none; z-index:9999;
+        transition: all ${0.6 + Math.random() * 0.6}s ease-out;
+      `;
+      document.body.appendChild(c);
+      const angle = (Math.PI * 2 * i) / 20;
+      const dist = 80 + Math.random() * 120;
+      requestAnimationFrame(() => {
+        c.style.left = (cx + Math.cos(angle) * dist) + 'px';
+        c.style.top = (cy + Math.sin(angle) * dist - 40) + 'px';
+        c.style.opacity = '0';
+        c.style.transform = `rotate(${Math.random() * 360}deg) scale(0.3)`;
+      });
+      setTimeout(() => c.remove(), 1400);
+    }
+  });
+
+  // ── Hide cursor on mobile / touch ──
+  if ('ontouchstart' in window) {
+    cursor.style.display = 'none';
+    cursorDot.style.display = 'none';
+    document.body.style.cursor = 'auto';
   }
 </script>
 </body>
