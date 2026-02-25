@@ -77,6 +77,42 @@
     50% { opacity: 0.15; }
   }
 
+  /* ── Dance animations ── */
+  @keyframes dance-sway {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  @keyframes dance-bounce {
+    0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+    30% { transform: translateY(-14px) scaleX(0.94) scaleY(1.06); }
+    50% { transform: translateY(0) scaleX(1.06) scaleY(0.94); }
+    70% { transform: translateY(-8px) scaleX(0.97) scaleY(1.03); }
+  }
+  @keyframes dance-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes dance-lean-left {
+    0%, 100% { transform: rotate(-2deg) translateX(0); }
+    50% { transform: rotate(5deg) translateX(10px); }
+  }
+  @keyframes dance-lean-right {
+    0%, 100% { transform: rotate(2deg) translateX(0); }
+    50% { transform: rotate(-5deg) translateX(-10px); }
+  }
+  @keyframes tail-wag {
+    0%, 100% { transform: rotate(-20deg); }
+    50% { transform: rotate(20deg); }
+  }
+  @keyframes tail-sway {
+    0%, 100% { transform: rotate(-12deg); }
+    50% { transform: rotate(12deg); }
+  }
+  @keyframes heart-float {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(0.3); }
+  }
+
   html { scroll-behavior: smooth; }
 
   body {
@@ -710,8 +746,8 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: linear-gradient(135deg, rgba(196,181,244,0.15), rgba(244,194,194,0.15));
-    border: 1px solid rgba(196,181,244,0.3);
+    background: linear-gradient(135deg, rgba(196,181,244,0.18), rgba(246,216,96,0.12), rgba(244,194,194,0.18));
+    border: 1px solid rgba(246,216,96,0.35);
     border-radius: 100px;
     padding: 14px 36px;
     font-family: 'Playfair Display', serif;
@@ -722,6 +758,7 @@
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 20px rgba(246,216,96,0.12), 0 0 40px rgba(196,181,244,0.08);
   }
   .rsvp-btn::before {
     content: '';
@@ -856,6 +893,54 @@
     animation: reveal 1s ease both 2s;
   }
   .tap-hint.hidden { opacity: 0; }
+
+  /* ── Dancing Dog & Cat ── */
+  .dance-scene {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 20px 0;
+  }
+  .dance-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    transition: color 0.3s ease;
+    letter-spacing: 0.02em;
+  }
+  .dance-scene:hover .dance-caption {
+    color: var(--blush);
+  }
+  .dance-stage {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 6px;
+    cursor: none;
+    position: relative;
+    padding: 8px 16px 0;
+  }
+  .dancer {
+    animation: dance-sway 2s ease-in-out infinite;
+    transition: filter 0.3s ease;
+  }
+  .dancer.cat { animation-delay: 0.3s; }
+  .dancer.glowing {
+    filter: drop-shadow(0 0 12px rgba(246,216,96,0.5));
+  }
+  [data-move="bounce"] .dancer { animation-name: dance-bounce; animation-duration: 0.6s; }
+  [data-move="spin"] .dancer { animation-name: dance-spin; animation-duration: 1.2s; }
+  [data-move="lean"] .dancer.dog { animation-name: dance-lean-left; animation-duration: 2.5s; }
+  [data-move="lean"] .dancer.cat { animation-name: dance-lean-right; animation-duration: 2.5s; }
+  .dog-tail { animation: tail-wag 0.4s ease-in-out infinite; }
+  .cat-tail { animation: tail-sway 0.6s ease-in-out infinite; }
+  .float-heart {
+    position: absolute;
+    pointer-events: none;
+    font-size: 18px;
+    animation: heart-float 1.5s ease-out forwards;
+    z-index: 15;
+  }
 </style>
 </head>
 <body class="envelope-active">
@@ -1046,6 +1131,115 @@
       <button class="rsvp-btn" id="rsvpBtn">
         <span>✦ i'm so in ✦</span>
       </button>
+    </div>
+
+    <!-- Dancing Dog & Cat -->
+    <div class="dance-scene reveal">
+      <div class="dance-caption">tap us! we're celebrating tonight</div>
+      <div class="dance-stage" id="danceStage" data-move="sway">
+
+        <!-- Dog (left) -->
+        <div class="dancer dog">
+          <svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" style="width:140px;height:152px">
+            <!-- Shadow -->
+            <ellipse cx="60" cy="120" rx="30" ry="5" fill="rgba(0,0,0,0.15)"/>
+            <!-- Tail -->
+            <g class="dog-tail" style="transform-origin:86px 78px">
+              <path d="M86,78 Q98,56 100,46 Q102,38 96,34" stroke="#f4c2c2" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- Body -->
+            <ellipse cx="60" cy="82" rx="28" ry="22" fill="#f4c2c2"/>
+            <!-- Back paws -->
+            <ellipse cx="40" cy="102" rx="8" ry="5" fill="#e8a8a8"/>
+            <ellipse cx="80" cy="102" rx="8" ry="5" fill="#e8a8a8"/>
+            <!-- Front paws -->
+            <ellipse cx="46" cy="104" rx="6" ry="4" fill="#f0b4b4"/>
+            <ellipse cx="74" cy="104" rx="6" ry="4" fill="#f0b4b4"/>
+            <!-- Collar -->
+            <rect x="47" y="66" width="26" height="5" rx="2" fill="#d4880a"/>
+            <!-- Star charm -->
+            <polygon points="60,72 61.2,74.5 64,74.8 62,76.6 62.5,79.3 60,77.8 57.5,79.3 58,76.6 56,74.8 58.8,74.5" fill="#f6d860"/>
+            <!-- Head -->
+            <circle cx="60" cy="46" r="22" fill="#f4c2c2"/>
+            <!-- Left ear (floppy) -->
+            <ellipse cx="40" cy="32" rx="9" ry="15" fill="#e8a8a8" transform="rotate(-15 40 32)"/>
+            <ellipse cx="40" cy="34" rx="5" ry="9" fill="#f0b4b4" transform="rotate(-15 40 34)"/>
+            <!-- Right ear (floppy) -->
+            <ellipse cx="80" cy="32" rx="9" ry="15" fill="#e8a8a8" transform="rotate(15 80 32)"/>
+            <ellipse cx="80" cy="34" rx="5" ry="9" fill="#f0b4b4" transform="rotate(15 80 34)"/>
+            <!-- Left eye -->
+            <circle cx="51" cy="44" r="5.5" fill="white"/>
+            <circle cx="51" cy="44" r="3" fill="#2a2040" class="pupil" data-cx="51" data-cy="44"/>
+            <circle cx="49.5" cy="42.5" r="1.5" fill="white" opacity="0.9"/>
+            <!-- Right eye -->
+            <circle cx="69" cy="44" r="5.5" fill="white"/>
+            <circle cx="69" cy="44" r="3" fill="#2a2040" class="pupil" data-cx="69" data-cy="44"/>
+            <circle cx="67.5" cy="42.5" r="1.5" fill="white" opacity="0.9"/>
+            <!-- Blush spots -->
+            <ellipse cx="41" cy="52" rx="5" ry="3" fill="rgba(255,150,150,0.35)"/>
+            <ellipse cx="79" cy="52" rx="5" ry="3" fill="rgba(255,150,150,0.35)"/>
+            <!-- Nose -->
+            <ellipse cx="60" cy="53" rx="3.5" ry="2.5" fill="#3a2030"/>
+            <!-- Mouth (smile) -->
+            <path d="M55,57 Q60,62 65,57" stroke="#3a2030" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Cat (right) -->
+        <div class="dancer cat">
+          <svg viewBox="0 0 110 130" xmlns="http://www.w3.org/2000/svg" style="width:130px;height:152px">
+            <!-- Shadow -->
+            <ellipse cx="55" cy="120" rx="26" ry="4" fill="rgba(0,0,0,0.15)"/>
+            <!-- Tail -->
+            <g class="cat-tail" style="transform-origin:77px 78px">
+              <path d="M77,78 Q92,58 86,42 Q80,30 88,22" stroke="#c4b5f4" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- Body (sleeker) -->
+            <ellipse cx="55" cy="82" rx="24" ry="20" fill="#c4b5f4"/>
+            <!-- Back paws -->
+            <ellipse cx="38" cy="100" rx="7" ry="4.5" fill="#a898d8"/>
+            <ellipse cx="72" cy="100" rx="7" ry="4.5" fill="#a898d8"/>
+            <!-- Front paws -->
+            <ellipse cx="42" cy="102" rx="5.5" ry="3.5" fill="#b8a8e8"/>
+            <ellipse cx="68" cy="102" rx="5.5" ry="3.5" fill="#b8a8e8"/>
+            <!-- Collar -->
+            <rect x="42" y="66" width="26" height="4.5" rx="2" fill="#4a9090"/>
+            <!-- Moon charm (crescent) -->
+            <path d="M55,71 A4,4 0 1,1 55,79 A2.8,2.8 0 1,0 55,71" fill="#7ee8e8"/>
+            <!-- Head -->
+            <circle cx="55" cy="46" r="20" fill="#c4b5f4"/>
+            <!-- Left ear (pointed) -->
+            <polygon points="37,24 28,44 46,44" fill="#a898d8"/>
+            <polygon points="37,29 32,42 42,42" fill="#d0c4f8"/>
+            <!-- Right ear (pointed) -->
+            <polygon points="73,24 64,44 82,44" fill="#a898d8"/>
+            <polygon points="73,29 68,42 78,42" fill="#d0c4f8"/>
+            <!-- Left eye -->
+            <circle cx="46" cy="44" r="5" fill="white"/>
+            <circle cx="46" cy="44" r="2.8" fill="#2a2040" class="pupil" data-cx="46" data-cy="44"/>
+            <circle cx="44.8" cy="42.5" r="1.3" fill="white" opacity="0.9"/>
+            <!-- Right eye -->
+            <circle cx="64" cy="44" r="5" fill="white"/>
+            <circle cx="64" cy="44" r="2.8" fill="#2a2040" class="pupil" data-cx="64" data-cy="44"/>
+            <circle cx="62.8" cy="42.5" r="1.3" fill="white" opacity="0.9"/>
+            <!-- Blush spots -->
+            <ellipse cx="37" cy="51" rx="4.5" ry="2.5" fill="rgba(255,150,200,0.3)"/>
+            <ellipse cx="73" cy="51" rx="4.5" ry="2.5" fill="rgba(255,150,200,0.3)"/>
+            <!-- Nose -->
+            <polygon points="55,51 53,49 57,49" fill="#8a6080"/>
+            <!-- Mouth (w shape) -->
+            <path d="M50,54 Q52.5,57 55,54 Q57.5,57 60,54" stroke="#8a6080" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <!-- Whiskers -->
+            <line x1="28" y1="48" x2="42" y2="50" stroke="#a898d8" stroke-width="0.8"/>
+            <line x1="26" y1="51" x2="41" y2="52" stroke="#a898d8" stroke-width="0.8"/>
+            <line x1="28" y1="54" x2="42" y2="54" stroke="#a898d8" stroke-width="0.8"/>
+            <line x1="82" y1="48" x2="68" y2="50" stroke="#a898d8" stroke-width="0.8"/>
+            <line x1="84" y1="51" x2="69" y2="52" stroke="#a898d8" stroke-width="0.8"/>
+            <line x1="82" y1="54" x2="68" y2="54" stroke="#a898d8" stroke-width="0.8"/>
+          </svg>
+        </div>
+
+      </div>
     </div>
 
     <div class="love-note reveal">
@@ -1309,6 +1503,88 @@
       setTimeout(() => c.remove(), 1400);
     }
   });
+
+  // ── Dancing Dog & Cat ──
+  const danceStage = document.getElementById('danceStage');
+  const danceCaption = document.querySelector('.dance-caption');
+  const dMoves = ['sway', 'bounce', 'spin', 'lean'];
+  const dCaptions = [
+    'tap us! we\u2019re celebrating tonight',
+    'boing boing boing!!',
+    'wheee!',
+    'slow dance under the stars'
+  ];
+  let currentMove = 0;
+
+  if (danceStage) {
+    danceStage.addEventListener('click', e => {
+      e.stopPropagation();
+      currentMove = (currentMove + 1) % dMoves.length;
+      danceStage.dataset.move = dMoves[currentMove];
+      if (danceCaption) danceCaption.textContent = dCaptions[currentMove];
+
+      // Spawn floating hearts
+      const rect = danceStage.getBoundingClientRect();
+      const hx = e.clientX - rect.left;
+      const hy = e.clientY - rect.top;
+      const heartColors = ['#f4c2c2', '#f6d860', '#c4b5f4', '#7ee8e8'];
+      const heartChars = ['\u2665', '\u2726', '\u2661', '\u2727'];
+      for (let i = 0; i < 4; i++) {
+        const h = document.createElement('div');
+        h.className = 'float-heart';
+        h.textContent = heartChars[i];
+        h.style.left = (hx + (Math.random() - 0.5) * 40) + 'px';
+        h.style.top = hy + 'px';
+        h.style.color = heartColors[i];
+        danceStage.appendChild(h);
+        setTimeout(() => h.remove(), 1500);
+      }
+    });
+
+    // Eye tracking
+    const pupils = danceStage.querySelectorAll('.pupil');
+    let pupilRaf = false;
+    document.addEventListener('mousemove', e => {
+      if (pupilRaf) return;
+      pupilRaf = true;
+      requestAnimationFrame(() => {
+        pupils.forEach(pupil => {
+          const svg = pupil.closest('svg');
+          if (!svg) return;
+          const svgRect = svg.getBoundingClientRect();
+          const vb = svg.viewBox.baseVal;
+          const scaleX = vb.width / svgRect.width;
+          const scaleY = vb.height / svgRect.height;
+          const mx = (e.clientX - svgRect.left) * scaleX;
+          const my = (e.clientY - svgRect.top) * scaleY;
+          const cx = parseFloat(pupil.dataset.cx);
+          const cy = parseFloat(pupil.dataset.cy);
+          const dx = mx - cx;
+          const dy = my - cy;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const maxOff = 2.5;
+          const off = Math.min(dist, maxOff);
+          if (dist > 0) {
+            pupil.setAttribute('cx', cx + (dx / dist) * off);
+            pupil.setAttribute('cy', cy + (dy / dist) * off);
+          }
+        });
+        pupilRaf = false;
+      });
+    });
+
+    // Hover glow
+    danceStage.querySelectorAll('.dancer').forEach(d => {
+      d.addEventListener('mouseenter', () => {
+        d.classList.add('glowing');
+        cursor.classList.add('hovering');
+      });
+      d.addEventListener('mouseleave', () => {
+        d.classList.remove('glowing');
+        cursor.classList.remove('hovering');
+      });
+    });
+  }
 
   // ── Hide cursor on mobile / touch ──
   if ('ontouchstart' in window) {
