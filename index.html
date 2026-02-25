@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planet Parade Date Night</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #0a0e2a;
+    --deep: #060818;
+    --midnight: #0d1235;
+    --lavender: #c4b5f4;
+    --blush: #f4c2c2;
+    --gold: #f6d860;
+    --teal: #7ee8e8;
+    --white: #faf5ff;
+    --muted: rgba(196, 181, 244, 0.55);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.6); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes orbit {
+    from { transform: rotate(0deg) translateX(14px) rotate(0deg); }
+    to   { transform: rotate(360deg) translateX(14px) rotate(-360deg); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(246,216,96,0.4), 0 0 40px rgba(246,216,96,0.15); }
+    50% { box-shadow: 0 0 30px rgba(246,216,96,0.65), 0 0 60px rgba(246,216,96,0.25); }
+  }
+
+  body {
+    background: var(--deep);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  .page {
+    width: 680px;
+    min-height: 960px;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid rgba(196,181,244,0.15);
+    box-shadow: 0 0 80px rgba(10,5,40,0.9), 0 0 160px rgba(100,80,200,0.1);
+    animation: fadeIn 1s ease both;
+  }
+
+  /* ── Stars ── */
+  .stars { position: absolute; inset: 0; z-index: 0; }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+
+  /* ── Gradient sky layers ── */
+  .sky-gradient {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 15%, rgba(80,50,160,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 35% at 80% 25%, rgba(30,80,160,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 50% 100%, rgba(20,15,60,0.8) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ── Mountain silhouette ── */
+  .mountains {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 2;
+  }
+
+  /* ── Content ── */
+  .content {
+    position: relative;
+    z-index: 10;
+    padding: 52px 52px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── Top badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(196,181,244,0.1);
+    border: 1px solid rgba(196,181,244,0.25);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    width: fit-content;
+    margin-bottom: 26px;
+  }
+  .badge-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--lavender);
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  /* ── Headline ── */
+  .headline-wrap { margin-bottom: 6px; }
+  .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--blush);
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 54px;
+    line-height: 1.05;
+    color: var(--white);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .headline em {
+    font-style: italic;
+    background: linear-gradient(90deg, var(--gold), var(--blush), var(--lavender), var(--gold));
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 5s linear infinite;
+  }
+  .subheadline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,181,244,0.3), rgba(246,216,96,0.3), transparent);
+    margin: 30px 0;
+  }
+
+  /* ── Details row ── */
+  .details-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .detail-card {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(196,181,244,0.15);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .detail-label {
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.6;
+  }
+  .detail-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--white);
+  }
+  .detail-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── Context block ── */
+  .context {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17.5px;
+    line-height: 1.7;
+    color: rgba(250,245,255,0.75);
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+  .context strong {
+    color: var(--blush);
+    font-weight: 400;
+  }
+
+  /* ── Planet parade ── */
+  .planet-section { margin-bottom: 30px; }
+  .section-title {
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: 0.6;
+    margin-bottom: 14px;
+  }
+  .planets {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .planet-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 7px 13px 7px 10px;
+    transition: all 0.3s ease;
+  }
+  .planet-pill:hover {
+    background: rgba(196,181,244,0.12);
+    border-color: rgba(196,181,244,0.35);
+  }
+  .planet-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: float 3s ease-in-out infinite;
+  }
+  .planet-name {
+    font-size: 12px;
+    color: var(--white);
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+  .planet-note {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+
+  /* ── Tips ── */
+  .tips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 13px 14px;
+  }
+  .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .tip-text { font-size: 12.5px; color: rgba(250,245,255,0.65); line-height: 1.5; }
+  .tip-text strong { color: var(--white); font-weight: 400; }
+
+  /* ── Footer love note ── */
+  .love-note {
+    text-align: center;
+    border-top: 1px solid rgba(196,181,244,0.12);
+    padding-top: 22px;
+  }
+  .love-note p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--blush);
+    opacity: 0.8;
+    letter-spacing: 0.02em;
+  }
+  .love-hearts {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--lavender);
+    opacity: 0.5;
+    letter-spacing: 0.3em;
+  }
+
+  /* ── Decorative planet cluster (top right) ── */
+  .deco-cluster {
+    position: absolute;
+    top: 38px;
+    right: 48px;
+    z-index: 8;
+    width: 80px;
+    height: 80px;
+  }
+  .deco-planet {
+    position: absolute;
+    border-radius: 50%;
+  }
+  .dp1 {
+    width: 28px; height: 28px;
+    background: radial-gradient(circle at 35% 35%, #f6d860, #d4880a);
+    top: 18px; left: 22px;
+    box-shadow: 0 0 16px rgba(246,216,96,0.5);
+    animation: glow-pulse 3s ease-in-out infinite, float 4s ease-in-out infinite;
+  }
+  .dp2 {
+    width: 13px; height: 13px;
+    background: radial-gradient(circle at 35% 35%, #c4e8ff, #7bbfdc);
+    top: 5px; left: 38px;
+    animation: float 5s ease-in-out infinite 1s;
+    opacity: 0.9;
+  }
+  .dp3 {
+    width: 9px; height: 9px;
+    background: radial-gradient(circle at 35% 35%, #f4c2c2, #c87090);
+    top: 44px; left: 8px;
+    animation: float 3.5s ease-in-out infinite 0.5s;
+    opacity: 0.85;
+  }
+  .dp4 {
+    width: 7px; height: 7px;
+    background: radial-gradient(circle at 35% 35%, #c4b5f4, #8060c0);
+    top: 55px; left: 50px;
+    animation: float 4.5s ease-in-out infinite 2s;
+    opacity: 0.7;
+  }
+  /* Saturn ring */
+  .dp1::after {
+    content: '';
+    position: absolute;
+    width: 44px; height: 9px;
+    border: 2px solid rgba(246,216,96,0.45);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotateX(70deg);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+  <div class="sky-gradient"></div>
+
+  <!-- Decorative planet cluster -->
+  <div class="deco-cluster">
+    <div class="deco-planet dp1"></div>
+    <div class="deco-planet dp2"></div>
+    <div class="deco-planet dp3"></div>
+    <div class="deco-planet dp4"></div>
+  </div>
+
+  <!-- Mountain silhouette SVG -->
+  <div class="mountains">
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%">
+      <defs>
+        <linearGradient id="mtnGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0d1235"/>
+          <stop offset="100%" stop-color="#060818"/>
+        </linearGradient>
+      </defs>
+      <!-- Back range -->
+      <polygon points="0,220 0,160 60,110 130,145 200,80 280,130 340,70 410,120 480,75 550,110 620,90 680,115 680,220" fill="rgba(13,18,53,0.7)"/>
+      <!-- Front range -->
+      <polygon points="0,220 0,185 80,155 160,175 250,130 320,165 400,120 470,155 560,135 640,160 680,145 680,220" fill="#080d28"/>
+      <!-- Ground fill -->
+      <rect x="0" y="210" width="680" height="10" fill="#060818"/>
+    </svg>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+
+    <div class="badge"><span class="badge-dot"></span> Saturday · February 28, 2026</div>
+
+    <div class="headline-wrap">
+      <div class="eyebrow">babe, look up 🌙</div>
+      <div class="headline">Six Planets,<br>One <em>Night</em></div>
+      <div class="subheadline">just us & the whole solar system at Grizzly Peak ✦</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="details-row">
+      <div class="detail-card">
+        <div class="detail-label">Where</div>
+        <div class="detail-value">Grizzly Peak Vista Point</div>
+        <div class="detail-sub">Centennial Dr, Berkeley Hills · 4.8 ★</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">When</div>
+        <div class="detail-value">6:00 – 7:30 PM</div>
+        <div class="detail-sub">arrive before sunset (6:05 PM!!) don't be late 🌅</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Vibes</div>
+        <div class="detail-value">68°F · Clear ✨</div>
+        <div class="detail-sub">only 10% chance of rain, the universe said yes</div>
+      </div>
+    </div>
+
+    <p class="context">
+      okay so this is actually so cool — once every few years, the planets
+      basically <strong>line up in the same patch of sky</strong> and you can see them all at once.
+      it happens because every planet orbits the Sun on the same flat plane, so from Earth
+      they always show up along the same stripe across the sky. on Feb 28th,
+      <strong>six of them</strong> are all out at the same time right after sunset —
+      which is genuinely rare and a little magical ✨ we're watching from the Berkeley hills
+      at <strong>1,760 feet</strong> with a huge open view of the whole western sky.
+      basically the perfect spot. 🌌
+    </p>
+
+    <div class="planet-section">
+      <div class="section-title">✦ the planetary cast, west to east</div>
+      <div class="planets">
+        <div class="planet-pill">
+          <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#ffe0b0,#c87a30);animation-delay:0s"></div>
+          <span class="planet-name">Mercury</span><span class="planet-note">· low &amp; fleeting</span>
+        </div>
+        <div class="planet-pill">
+          <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#fff8c0,#e8c840);animation-delay:0.5s"></div>
+          <span class="planet-name">Venus</span><span class="planet-note">· bright &amp; beautiful</span>
+        </div>
+        <div class="planet-pill">
+          <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#f6d860,#b08820);animation-delay:0.2s"></div>
+          <span class="planet-name">Saturn</span><span class="planet-note">· rings!</span>
+        </div>
+        <div class="planet-pill">
+          <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#c0d8ff,#6090d0);animation-delay:1s"></div>
+          <span class="planet-name">Neptune</span><span class="planet-note">· telescope needed</span>
+        </div>
+        <div class="planet-pill">
+          <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#b0f0e0,#50b090);animation-delay:0.8s"></div>
+          <span class="planet-name">Uranus</span><span class="planet-note">· binoculars</span>
+        </div>
+        <div class="planet-pill">
+          <div class="planet-dot" style="background:radial-gradient(circle at 35% 35%,#ffd0c0,#d06040);animation-delay:0.3s"></div>
+          <span class="planet-name">Jupiter</span><span class="planet-note">· unmissable ✦</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips">
+      <div class="tip">
+        <div class="tip-icon">⏱</div>
+        <div class="tip-text"><strong>get there by 6 PM ok!</strong> Mercury dips below the horizon fast and she's the rarest one</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">🔭</div>
+        <div class="tip-text"><strong>binoculars if we have them!</strong> Uranus is hiding near the Pleiades — yes it's real, yes we're finding it</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">📱</div>
+        <div class="tip-text"><strong>download Star Walk</strong> — point your phone at any light in the sky and it tells you exactly what it is 🤩</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">🧣</div>
+        <div class="tip-text"><strong>bundle up bestie</strong> — it drops to 60°F after sunset up in the hills. cozy &gt; cold always</div>
+      </div>
+    </div>
+
+    <div class="love-note">
+      <p>"we are literally made of stardust. tonight we finally get to see where it came from 🥹"</p>
+      <div class="love-hearts">✦ ♡ ✦ ♡ ✦</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const starsEl = document.getElementById('stars');
+  const count = 180;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() < 0.12 ? Math.random() * 2.5 + 1.5
+               : Math.random() < 0.5  ? Math.random() * 1.2 + 0.5
+               : Math.random() * 0.8 + 0.3;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random() * 75}%;
+      left:${Math.random() * 100}%;
+      --dur:${2 + Math.random() * 4}s;
+      --delay:${Math.random() * 5}s;
+      opacity:${0.4 + Math.random() * 0.6};
+    `;
+    starsEl.appendChild(s);
+  }
+</script>
+</body>
+</html>
